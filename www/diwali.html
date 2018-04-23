@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title></title>
+  <link rel="manifest" href="manifest.json">
+  <!-- un-comment this code to enable service worker
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log('service worker installed'))
+          .catch(err => console.log('Error', err));
+      }
+    </script>-->
+  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+  <!-- ionic/angularjs js -->
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+  <!-- cordova script (this will be a 404 during development) -->
+  <script src="cordova.js"></script>
+
+  <!-- your app's js -->
+  <script src="js/uuid.js"></script>
+  <script src="js/app.js"></script>
+  <!-- firebase angular code -->
+  <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(function () {
+
+      // VARIABLEZ
+      // play with them
+      var c = document.querySelector('canvas'),
+        ctx = c.getContext('2d'),
+        width = c.width = window.innerWidth,
+        height = c.height = window.innerHeight,
+
+        n_stars = 150, //num of stars
+        stars = [], //array to store generated stars
+        twinkleFactor = .4, //how much stars 'twinkle'
+        maxStarRadius = 3,
+
+        fw1, fw2, //firework objects
+        minStrength = 1.5, //lowest firework power
+        maxStrength = 7, //highest firework power
+        minTrails = 7, //min particles
+        maxTrails = 30, //max particles
+        particleRadius = 2,
+        trailLength = 15, //particle trail length
+        delay = .5, // number of LIFEs between explosions
+
+        LIFE = 150, //life time of firework
+
+        g = 5e-2, //strength of gravity
+        D = 1e-3; //strength of drag (air resistance)
+
+      // Particle Class
+      var Particle = function (x, y, vx, vy, ax, ay, colour) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.ax = ax;
+        this.ay = ay;
+        this.life = LIFE; //only here for opacity in .draw() method
+        this.path = [];
+        this.colour = colour;
+        this.r = particleRadius;
+
+        this.update = function () {
+          this.life--;
+
+          // add point to path but if full, remove a point first
+          if (this.path.length >= trailLength) this.path.shift();
+          this.path.push([this.x, this.y])
+
+          // update speed n position n stuff
+          this.vy += this.ay;
+          this.vx += this.ax;
+          this.x += this.vx;
+          this.y += this.vy;
+        }
+
+        this.draw = function () {
+          var opacity = ~~(this.life * 100 / LIFE) / 100;
+
+          // tail      
+          ctx.fillStyle = 'rgba(' + this.colour + (opacity * 0.4) + ')';
+          if (this.life > LIFE * 0.95) ctx.fillStyle = '#fff';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(this.x - this.r, this.y);
+          var i = this.path.length - 1;
+          ctx.lineTo(this.path[0][0], this.path[0][1]);
+          ctx.lineTo(this.x + this.r, this.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // main dot
+          ctx.fillStyle = 'rgba(' + this.colour + opacity + ')';
+          if (this.life > LIFE * 0.95) ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(~~this.x, ~~this.y, this.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+
+      // Firework class
+      var Firework = function () {
+        this.x = width * (Math.random() * 0.8 + 0.1); // from 0.1-0.9 widths
+        this.y = height * (Math.random() * 0.8 + 0.1); // from 0.1-0.9 heights
+        this.strength = Math.random() * (maxStrength - minStrength) + minStrength;
+        this.colour = ~~(Math.random() * 255) + ',' +
+          ~~(Math.random() * 255) + ',' +
+          ~~(Math.random() * 255) + ',';
+        this.life = 0;
+        this.particles = (function (x, y, strength, colour) {
+          var p = [];
+
+          var n = ~~(Math.random() * (maxTrails - minTrails)) + minTrails;
+          var ay = g;
+          for (var i = n; i--;) {
+            var ax = D;
+            var angle = i * Math.PI * 2 / n;
+            if (angle < Math.PI) ax *= -1;
+            var vx = strength * Math.sin(angle);
+            var vy = strength * Math.cos(angle);
+            p.push(new Particle(x, y, vx, vy, ax, ay, colour));
+          }
+
+          return p;
+        })(this.x, this.y, this.strength, this.colour);
+
+        this.update = function () {
+          this.life++;
+          if (this.life < 0) return; //allows life to be delayed
+          for (var i = this.particles.length; i--;) {
+            this.particles[i].update();
+            this.particles[i].draw();
+            //wasn't bothered to make an extra draw function for firework class
+          }
+        }
+      };
+      var Star = function () {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.r = Math.random() * maxStarRadius;
+        this.b = ~~(Math.random() * 100) / 100;
+      }
+
+      Star.prototype.draw = function () {
+        this.b += twinkleFactor * (Math.random() - .5);
+        ctx.fillStyle = 'rgba(255,255,255,' + this.b + ')';
+        ctx.beginPath();
+        ctx.arc(~~this.x, ~~this.y, this.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      function createStars() {
+        for (var i = n_stars; i--;) stars.push(new Star);
+      }
+
+      function main() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, width, height);
+
+        for (var i = n_stars; i--;) stars[i].draw();
+
+        fw1.update();
+        fw2.update();
+
+        if (fw1.life == LIFE * delay) fw2 = new Firework;
+        if (fw2.life == LIFE * delay) fw1 = new Firework;
+
+        window.requestAnimationFrame(main);
+      }
+
+      function init() {
+        fw1 = new Firework;
+        fw2 = new Firework;
+        fw2.life = -LIFE * delay;
+        createStars();
+        main();
+      }
+
+      init();
+
+    });
+  </script>
+
+</head>
+
+<body ng-app="myapp" ng-controller="mycontroller" ng-init="playMusic()">
+  <ion-pane>
+    <ion-header-bar class="bar-stable">
+      <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indian Festivals</h1>
+    </ion-header-bar>
+    <ion-content>
+      <p>
+        <h1 class="aligncenter">Diwali</h1>
+      </p>
+
+      <p class="aligncenter">
+        <img src="img/3aDiwali.png" width="50%" height="10%" />
+      </p>
+      <hr>
+
+      <p class="aligncontentcenter">Diwali is a festival of lights and is a gazetted holiday in India. Followers of Buddhism, Hinduism, Jainism and Sikhism
+        observe various customs related to Diwali.</p>
+      <p class="aligncontentcenter">Diwali celebrations may last for up to five days. Many people decorate their home and workplaces with tiny electric
+        lights or small clay oil lamps. Bowls of water with candles and flowers floating on the surface are also popular
+        decorations
+      </p>
+      <!--<button type="button" ng-click="playAudio()">Play Diwali Music</button><br>-->
+      <audio id="audio" src="media/Diwali.mp3"></audio>
+      <hr>
+
+      <p style="text-align:center;">
+        <button type="button" id="loginwelcomebutton" ng-click="gotoHomePage()">Back</button>
+      </p>
+      <p style="text-align:center;">
+        <button id="logoutbutton" ng-click="gotoIndexPage()">Sign Out</button>
+      </p>
+      <hr>
+
+      <canvas id="canvasdiwali">Canvas is not supported in your browser.</canvas>
+      <hr>
+
+      <p id="youtube" class="aligncenter">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/mPwmXRws7FA" frameborder="0"></iframe>
+      </p>
+      <br>
+      <hr>
+
+      <p class="aligncenter" id="maps">Place to Celebrate Diwali
+        <br>
+        <br>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d92766.86501260812!2d-80.48280897626043!3d43.39867074489161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882c758c7f8f28a9%3A0x507da7a466a5360b!2sRadha+Krishna+Mandir+-+Cambridge+Hindu+Society!5e0!3m2!1sen!2sca!4v1524195417987"
+          width="94%" height="200" frameborder="0" style="border:0" allowfullscreen></iframe>
+      </p>
+      <hr>
+
+      <!--
+      <p style="text-align:center;">
+        <button id="logoutbutton" ng-click="scan()">scan</button>
+      </p>
+
+      <p style="text-align:center;">
+        <button id="logoutbutton" ng-click="notify()">nofify</button>
+      </p>
+-->
+
+      <!-- Project and tasks start-->
+      <div id="comments" class="aligncenter">
+        <div id="respond">
+          <h3 style="margin-left: 3%">Comment for Diwali </h3>
+          <form ng-submit="addTask(projects['0f572fc5-8578-45fe-9286-b9d2283c20b8'])">
+            <textarea rows="6" ng-model="projects['0f572fc5-8578-45fe-9286-b9d2283c20b8'].task.start" placeholder="Comment" required="required"></textarea>
+            <input ng-model="projects['0f572fc5-8578-45fe-9286-b9d2283c20b8'].task.name" type="text" placeholder="Name" required="required"
+            />
+            <input ng-model="projects['0f572fc5-8578-45fe-9286-b9d2283c20b8'].task.length" type="Email" placeholder="Email" required="required"
+            />
+            <p style="text-align:right;margin-right: 5%;">
+              <button id="postbutton" style="text-align:center;">
+                POST COMMENT
+              </button>
+            </p>
+          </form>
+        </div>
+        <br>
+        <br>
+        <hr>
+        <div class="indent">
+          <h3 class="commentheader">Previous Comments:</h3>
+          <div ng-repeat="task in projects['0f572fc5-8578-45fe-9286-b9d2283c20b8'].tasks" class="commentcontent">
+            <div class="media-body postsection">
+              <h4 class="media-heading">{{task.name}}&nbsp;({{task.length}})</h4>
+              <span class="commenttext">&nbsp; &nbsp;{{task.start}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Project and tasks end-->
+
+
+    </ion-content>
+  </ion-pane>
+</body>
+
+</html>

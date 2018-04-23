@@ -1,0 +1,34 @@
+{
+  "name": "Assignment1",
+  "version": "0.0.1",
+  "description": "An Ionic project",
+  "devDependencies": {
+    "gulp": "^3.5.6",
+    "gulp-clean-css": "^3.7.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-sass": "^3.1.0"
+  },
+  "dependencies": {
+    "cordova-plugin-barcodescanner": "^0.7.4",
+    "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
+    "cordova-plugin-local-notifications": "^1.0.0",
+    "cordova-plugin-media": "^5.0.2",
+    "cordova-plugin-network-information": "^2.0.1",
+    "cordova-plugin-sqlserver": "git+https://github.com/SergioDosSantos/cordova-plugin-sqlserver.git",
+    "cordova-plugin-vibration": "^3.0.1",
+    "phonegap-plugin-barcodescanner": "git+https://github.com/wildabeast/BarcodeScanner.git",
+    "phonegap-plugin-local-notification": "^1.0.1"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-media": {},
+      "cordova-plugin-vibration": {},
+      "cordova-plugin-barcodescanner": {},
+      "phonegap-plugin-barcodescanner": {},
+      "cordova-plugin-local-notification": {},
+      "phonegap-plugin-local-notification": {},
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-sqlserver": {}
+    }
+  }
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title></title>
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <!------ Include the above in your HEAD tag ---------->
+
+
+  <link rel="manifest" href="manifest.json">
+
+  <!-- un-comment this code to enable service worker
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log('service worker installed'))
+          .catch(err => console.log('Error', err));
+      }
+    </script>-->
+
+  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+
+  <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+  <!-- ionic/angularjs js -->
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+  <!-- cordova script (this will be a 404 during development) -->
+  <script src="cordova.js"></script>
+
+  <!-- your app's js -->
+  <script src="js/uuid.js"></script>
+  <script src="js/app.js"></script>
+ <!-- firebase angular code -->
+ <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+ <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.js"></script>
+
+</head>
+
+<body ng-app="myapp" ng-controller="mycontroller">
+  <ion-pane>
+    <ion-header-bar class="bar-stable">
+        <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indian Festivals</h1>
+      </ion-header-bar>
+    <ion-content>
+      <img src="img/1Welcome.png" width="100%" />
+      <!-- <br> Please Login with your Username and Password
+      <br>
+      <form ng-app="myapp" ng-controller="mycontroller" ng-submit="login()">
+        <label>{{loginerror}}</label>
+        <br> UserName:
+        <input type="textbox" ng-model="username">
+        <br> Password:
+        <input type="textbox" ng-model="password">
+        <br>
+        <button type="submit">Login</button>
+        <br>
+        <button type="button" ng-click="gotoIndexPage()">Goto Welcome Screen</button>
+      </form>-->
+      <form ng-app="myapp" ng-controller="mycontroller" ng-submit="login()">
+        <p id="loginpara" style="font-weight:bold;"> Please Login with your Username and Password</p>
+        <p id="loginpara" style="font-weight:bold;color:red;"> {{loginerror}}</label>
+        </p>
+        <center><input type="textbox" ng-model="username" class="aligncenter" placeholder="Username" required autofocus></center>
+        <br>
+        <center><input type="password" ng-model="password" class="aligncenter" placeholder="Password " required></center><br><br>
+        <center><button class="aligncenter" id="loginsignbutton" type="submit ">Sign in</button></center>
+        <br>
+      </form>
+      <form>
+          <center><button class="aligncenter" id="loginwelcomebutton" ng-click="gotoIndexPage()"> Back</button></center>
+      </form>
+    </ion-content>
+  </ion-pane>
+</body>
+
+</html>
