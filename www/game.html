@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title></title>
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="manifest" href="manifest.json">
+  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+
+  <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <script src="cordova.js"></script>
+  <script src="js/uuid.js"></script>
+  <script src="js/app.js"></script>
+  <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.js"></script>
+</head>
+
+<body ng-app="myapp" ng-controller="mycontroller">
+  <ion-pane>
+    <ion-header-bar>
+      <h1>GAME</h1>
+    </ion-header-bar>
+    <ion-content>
+      <table class="boardClass">
+        <tr>
+          <td>
+            <button id="b01" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b02" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b03" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b04" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="b11" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b12" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b13" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b14" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="b21" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b22" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b23" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b24" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="b31" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b32" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b33" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+          <td>
+            <button id="b34" data-ng-click="move(board['0f572fc5-8578-45fe-9286-b9d2283c20b8'],$event)"></button>
+          </td>
+        </tr>
+      </table>
+      <div ng-repeat="task in board['0f572fc5-8578-45fe-9286-b9d2283c20b8'].tasks">
+        <input id="hid" value={{task.boardStatus}}>
+        <script>
+            setInterval(function() {
+              var res0 = document.getElementById("hid").value;
+              var res1 = res0.split(",");
+              for(i=0;i<res1.length-1;i++)
+              {
+                var res2=res1[i].split(":");
+                res2[0]=res2[0].trim();
+                document.getElementById(res2[0]).style.background = res2[1];  
+              }
+            },10 * 1000); // 60 * 1000 milsec
+            
+            function myfunc() {
+            alert("123");
+          }
+        </script>
+      </div>
+    </ion-content>
+  </ion-pane>
+</body>
+
+</html>
